@@ -1,14 +1,11 @@
-version: '3'
+version: '3.7'
 
 services:
 
     app:
-        build:
-          dockerfile: .docker/app/Dockerfile
-          context: .
-          target: dev
+        build: ./.docker/app
         container_name: micro-videos-app
-        entrypoint: dockerize -template ./.docker/app/.env:.env -wait tcp://db:3306 -timeout 40s ./.docker/entrypoint.sh
+        entrypoint: dockerize -template ./.env:.env -wait tcp://db:3306 -timeout 40s ./.docker/app/entrypoint.sh
         environment:
             - _DB_HOST=db
             - _DB_DATABASE=code_micro_videos
