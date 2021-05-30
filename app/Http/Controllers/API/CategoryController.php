@@ -13,6 +13,7 @@ class CategoryController extends Controller
 {
     private $rules = [
         'name' => 'required|max:255',
+        'description' => 'nullable',
         'is_active' => 'boolean',
     ];
 
@@ -35,7 +36,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $serialized = $request->only(['name', 'description', 'is_active']);
+        $serialized = $request->only(array_keys($this->rules));
 
         $this->validate($request, $this->rules);
 
@@ -63,7 +64,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category): JsonResponse
     {
-        $serialized = $request->only(['name', 'description', 'is_active']);
+        $serialized = $request->only(array_keys($this->rules));
 
         $this->validate($request, $this->rules);
 

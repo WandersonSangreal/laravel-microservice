@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\API\GenderController;
 use App\Http\Controllers\API\CategoryController;
 
 /*
@@ -22,4 +23,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group([], function () {
     Route::resource('categories', CategoryController::class, ['except' => ['create', 'edit']]);
+    Route::resource('genders', GenderController::class, ['except' => ['create', 'edit']]);
 });
