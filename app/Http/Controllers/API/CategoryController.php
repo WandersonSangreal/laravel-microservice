@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
@@ -24,10 +25,18 @@ class CategoryController extends Controller
      *
      * @param Request $request
      * @return JsonResponse
+     * @throws ValidationException
      */
     public function store(Request $request): JsonResponse
     {
-        //
+        $serialized = $request->only(['name', 'description', 'is_active']);
+
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'is_active' => 'boolean',
+        ]);
+
+        return response()->json(Category::create($serialized));
     }
 
     /**
