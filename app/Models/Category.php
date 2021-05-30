@@ -10,7 +10,9 @@ class Category extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Traits\Uuid;
 
+    protected $casts = ['id' => 'string'];
     protected $fillable = ['name', 'description', 'is_active'];
 
 }
