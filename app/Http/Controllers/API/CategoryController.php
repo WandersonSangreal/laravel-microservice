@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
@@ -76,10 +77,13 @@ class CategoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Category $category
-     * @return JsonResponse
+     * @return Response | JsonResponse
      */
     public function destroy(Category $category): JsonResponse
     {
-        //
+        $category->delete();
+
+        return response()->json([], 204);
+
     }
 }
