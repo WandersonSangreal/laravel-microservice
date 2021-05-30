@@ -10,6 +10,11 @@ use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
+    private $rules = [
+        'name' => 'required|max:255',
+        'is_active' => 'boolean',
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -31,10 +36,7 @@ class CategoryController extends Controller
     {
         $serialized = $request->only(['name', 'description', 'is_active']);
 
-        $this->validate($request, [
-            'name' => 'required|max:255',
-            'is_active' => 'boolean',
-        ]);
+        $this->validate($request, $this->rules);
 
         return response()->json(Category::create($serialized));
     }
@@ -56,10 +58,18 @@ class CategoryController extends Controller
      * @param Request $request
      * @param Category $category
      * @return JsonResponse
+     * @throws ValidationException
      */
     public function update(Request $request, Category $category): JsonResponse
     {
-        //
+        $serialized = $request->only(['name', 'description', 'is_active']);
+
+        $this->validate($request, $this->rules);
+
+        $category->update($serialized);
+
+        return response()->json($category);
+
     }
 
     /**
