@@ -1,26 +1,33 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Models;
 
 use App\Models\Category;
 use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use PHPUnit\Framework\TestCase;
 
 class CategoryTest extends TestCase
 {
+    private $category;
 
-    use DatabaseMigrations;
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->category = new Category();
+    }
 
     public function test_fillable_attribute()
     {
         $fillable = ['name', 'description', 'is_active'];
 
-        $category = new Category();
+        $categoryFillable = $this->category->getFillable();
 
-        $this->assertEquals($fillable, $category->getFillable());
+        array_multisort($fillable, $categoryFillable);
+
+        $this->assertEquals($fillable, $categoryFillable);
     }
 
     public function test_if_use_traits()
@@ -36,19 +43,20 @@ class CategoryTest extends TestCase
 
     public function test_casts_attribute()
     {
-        $casts = ['id' => 'string', 'deleted_at' => 'datetime'];
+        $casts = ['id' => 'string', 'deleted_at' => 'datetime', 'is_active' => 'boolean'];
 
-        $category = new Category();
+        $categoryCasts = $this->category->getCasts();
 
-        $this->assertEquals($casts, $category->getCasts());
+        array_multisort($casts, $categoryCasts);
+
+        $this->assertEquals($casts, $categoryCasts);
     }
 
     public function test_dates_attribute()
     {
         $dates = ['created_at', 'updated_at'];
 
-        $category = new Category();
-        $categoryDates = $category->getDates();
+        $categoryDates = $this->category->getDates();
 
         array_multisort($dates, $categoryDates);
 
@@ -57,9 +65,7 @@ class CategoryTest extends TestCase
 
     public function test_incrementing()
     {
-        $category = new Category();
-
-        $this->assertFalse($category->incrementing);
+        $this->assertFalse($this->category->incrementing);
     }
 
 }
