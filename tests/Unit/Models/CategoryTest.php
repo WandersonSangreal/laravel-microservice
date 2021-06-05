@@ -19,6 +19,7 @@ class CategoryTest extends TestCase
         $this->category = new Category();
     }
 
+
     public function test_fillable_attribute()
     {
         $fillable = ['name', 'description', 'is_active'];

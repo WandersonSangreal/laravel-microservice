@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -36,6 +37,7 @@ class CategoryTest extends TestCase
         $this->assertEquals('test', $category->name);
         $this->assertNull($category->description);
         $this->assertTrue($category->is_active);
+        $this->assertTrue(Uuid::isValid($category->id));
 
         $category = Category::create(['name' => 'test', 'description' => null]);
         $this->assertNull($category->description);
@@ -62,6 +64,20 @@ class CategoryTest extends TestCase
         foreach ($values as $key => $value) {
             $this->assertEquals($value, $category->{$key});
         }
+
+    }
+
+    public function test_delete()
+    {
+        $category = Category::factory(1)->create()->first();
+
+        $this->assertCount(1, Category::all());
+
+        $category->delete();
+
+        $this->assertCount(0, Category::all());
+
+        $this->assertCount(1, Category::onlyTrashed()->get());
 
     }
 
