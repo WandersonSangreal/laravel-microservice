@@ -13,6 +13,8 @@ class Gender extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public $incrementing = false;
+
     protected $casts = ['id' => 'string'];
     protected $fillable = ['name', 'is_active'];
 

@@ -11,6 +11,9 @@ use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
+    /**
+     * @var string[]
+     */
     private $rules = [
         'name' => 'required|max:255',
         'description' => 'nullable',

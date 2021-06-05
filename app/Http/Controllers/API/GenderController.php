@@ -10,7 +10,9 @@ use Illuminate\Validation\ValidationException;
 
 class GenderController extends Controller
 {
-
+    /**
+     * @var string[]
+     */
     private $rules = [
         'name' => 'required|max:255',
         'is_active' => 'boolean',

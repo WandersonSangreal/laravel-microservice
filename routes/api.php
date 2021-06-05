@@ -22,6 +22,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group([], function () {
-    Route::resource('categories', CategoryController::class, ['except' => ['create', 'edit']]);
-    Route::resource('genders', GenderController::class, ['except' => ['create', 'edit']]);
+
+    $exception = ['except' => ['create', 'edit']];
+
+    Route::resource('categories', CategoryController::class, $exception);
+    Route::resource('genders', GenderController::class, $exception);
+
 });
