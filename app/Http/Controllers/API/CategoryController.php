@@ -42,8 +42,10 @@ class CategoryController extends Controller
         $serialized = $request->only(array_keys($this->rules));
 
         $this->validate($request, $this->rules);
+        $category = Category::create($serialized);
+        $category->refresh();
 
-        return response()->json(Category::create($serialized));
+        return response()->json($category, 201);
     }
 
     /**

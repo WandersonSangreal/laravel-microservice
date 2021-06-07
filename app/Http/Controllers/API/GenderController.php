@@ -40,8 +40,10 @@ class GenderController extends Controller
         $serialized = $request->only(array_keys($this->rules));
 
         $this->validate($request, $this->rules);
+        $gender = Gender::create($serialized);
+        $gender->refresh();
 
-        return response()->json(Gender::create($serialized));
+        return response()->json($gender, 201);
     }
 
     /**
