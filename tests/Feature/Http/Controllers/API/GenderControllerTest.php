@@ -4,143 +4,112 @@ namespace Tests\Feature\Http\Controllers\API;
 
 use App\Models\Gender;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
+use Tests\Traits\TestSaves;
+use Tests\Traits\TestValidations;
 
 class GenderControllerTest extends TestCase
 {
-    use DatabaseMigrations;
+    use DatabaseMigrations, TestValidations, TestSaves;
+
+    private $gender;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->gender = Gender::factory()->create();
+    }
 
     public function test_index()
     {
-        $gender = Gender::factory()->create();
-
         $response = $this->get(route('genders.index'));
 
-        $response->assertStatus(200)->assertJson([$gender->toArray()]);
+        $response->assertStatus(200)->assertJson([$this->gender->toArray()]);
     }
 
     public function test_show()
     {
-        $gender = Gender::factory()->create();
+        $response = $this->get(route('genders.show', ['gender' => $this->gender->id]));
 
-        $response = $this->get(route('genders.show', ['gender' => $gender->id]));
-
-        $response->assertStatus(200)->assertJson($gender->toArray());
-    }
-
-    protected function assertInvalidationRequired(TestResponse $response)
-    {
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name'])
-            ->assertJsonMissingValidationErrors(['is_active'])
-            ->assertJsonFragment([Lang::get('validation.required', ['attribute' => 'name'])]);
-    }
-
-    protected function assertInvalidationMax(TestResponse $response)
-    {
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name'])
-            ->assertJsonFragment([Lang::get('validation.max.string', ['attribute' => 'name', 'max' => 255])]);
-    }
-
-    protected function assertInvalidationBoolean(TestResponse $response)
-    {
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['is_active'])
-            ->assertJsonFragment([Lang::get('validation.boolean', ['attribute' => 'is active'])]);
+        $response->assertStatus(200)->assertJson($this->gender->toArray());
     }
 
     public function test_invalidation_values()
     {
-        /**
-         * CREATE
-         */
 
-        $response = $this->json('POST', route('genders.store'));
+        $data = ['name' => ''];
+        $this->assertInvalidationStoreAction($data, 'required');
+        $this->assertInvalidationUpdateAction($data, 'required');
 
-        $this->assertInvalidationRequired($response);
+        $data = ['name' => str_repeat('a', 256)];
+        $this->assertInvalidationStoreAction($data, 'max.string', ['max' => 255]);
+        $this->assertInvalidationUpdateAction($data, 'max.string', ['max' => 255]);
 
-        $response = $this->json('POST', route('genders.store'), [
-            'name' => str_repeat('a', 256),
-            'is_active' => 'a'
-        ]);
-
-        $this->assertInvalidationMax($response);
-        $this->assertInvalidationBoolean($response);
-
-        /**
-         * UPDATE
-         */
-
-        $gender = Gender::factory()->create();
-
-        $response = $this->json('PUT', route('genders.update', ['gender' => $gender->id]), [
-            'name' => str_repeat('a', 256),
-            'is_active' => 'a'
-        ]);
-
-        $this->assertInvalidationMax($response);
-        $this->assertInvalidationBoolean($response);
+        $data = ['is_active' => 'a'];
+        $this->assertInvalidationStoreAction($data, 'boolean');
+        $this->assertInvalidationUpdateAction($data, 'boolean');
 
     }
 
     public function test_store()
     {
+        $data = ['name' => 'test'];
 
-        $response = $this->json('POST', route('genders.store'), [
-            'name' => 'test'
-        ]);
+        $response = $this->assertStore($data, $data + ['is_active' => true, 'deleted_at' => null]);
 
-        $id = $response->json('id');
-        $gender = Gender::find($id);
+        $response->assertJsonStructure(['created_at', 'updated_at']);
 
-        $response->assertStatus(201)->assertJson($gender->toArray());
+        $data = ['name' => 'test', 'is_active' => false];
 
-        $this->assertTrue($response->json('is_active'));
-
-        $response = $this->json('POST', route('genders.store'), [
-            'name' => 'test',
-            'is_active' => false
-        ]);
-
-        $response->assertJsonFragment([
-            'is_active' => false
-        ]);
-
+        $this->assertStore($data, $data + ['is_active' => false]);
     }
 
     public function test_update()
     {
-        $gender = Gender::factory()->create(['name' => 'test', 'is_active' => false]);
+        $this->gender = Gender::factory()->create(['name' => 'test', 'is_active' => false]);
 
-        $response = $this->json('PUT', route('genders.update', ['gender' => $gender->id]), [
-            'name' => 'test_world',
-            'is_active' => false
-        ]);
+        $data = ['name' => 'test_world', 'is_active' => true];
 
-        $id = $response->json('id');
-        $gender = Gender::find($id);
+        $response = $this->assertUpdate($data, $data + ['deleted_at' => null]);
 
-        $response->assertStatus(200)->assertJson($gender->toArray())->assertJsonFragment([
-            'name' => 'test_world',
-            'is_active' => false
-        ]);
+        $response->assertJsonStructure(['created_at', 'updated_at']);
+
+        $data['name'] = 'hello';
+
+        $this->assertUpdate($data, $data);
+
+        $data['is_active'] = false;
+
+        $this->assertUpdate($data, $data);
 
     }
 
     public function test_destroy()
     {
-        $gender = Gender::factory()->create();
-
-        $response = $this->json('DELETE', route('genders.destroy', ['gender' => $gender->id]));
+        $response = $this->json('DELETE', route('genders.destroy', ['gender' => $this->gender->id]));
 
         $response->assertStatus(204);
 
-        $this->assertSoftDeleted($gender);
+        $this->assertSoftDeleted($this->gender);
 
     }
+
+    protected function routeStore(): string
+    {
+        return route('genders.store');
+    }
+
+    protected function routeUpdate(): string
+    {
+        return route('genders.update', ['gender' => $this->gender->id]);
+    }
+
+    protected function model(): string
+    {
+        return Gender::class;
+    }
+
 }
