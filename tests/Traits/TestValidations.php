@@ -9,6 +9,9 @@ use Illuminate\Testing\TestResponse;
 
 trait TestValidations
 {
+    protected abstract function routeStore();
+    protected abstract function routeUpdate();
+
     protected function assertInvalidationStoreAction(array $data, string $rule, $ruleParam = [])
     {
         $fields = array_keys($data);
