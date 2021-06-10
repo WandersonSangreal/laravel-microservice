@@ -82,4 +82,38 @@ class ResourceAbstractControllerTest extends TestCase
         $value = $reflectionMethod->invokeArgs($this->controller, [0]);
         $this->assertInstanceOf(CategoryStub::class, $value);
     }
+
+    public function test_show()
+    {
+        $category = CategoryStub::create(['name' => 'test_name', 'description' => 'test_description']);
+
+        $reflectionClass = new ReflectionClass(ResourceAbstractController::class);
+        $reflectionMethod = $reflectionClass->getMethod('findOrFail');
+        $reflectionMethod->setAccessible(true);
+
+        $value = $reflectionMethod->invokeArgs($this->controller, [$category->id]);
+
+        $this->assertEquals(CategoryStub::find(1)->toArray(), $value->toArray());
+    }
+
+    public function test_update()
+    {
+        $category = CategoryStub::create(['name' => 'test_name', 'description' => 'test_description']);
+
+        $request = Mockery::mock(Request::class);
+        $request->shouldReceive('all')->once()->andReturn(['name' => 'test_name_update', 'description' => 'test_description_update']);
+
+        $value = $this->controller->update($request, $category->id);
+
+        $this->assertEquals(CategoryStub::find(1)->toArray(), $value->toArray());
+    }
+
+    public function test_destroy()
+    {
+        $category = CategoryStub::create(['name' => 'test_name', 'description' => 'test_description']);
+
+        $this->controller->destroy($category->id);
+
+        $this->assertDeleted($category);
+    }
 }

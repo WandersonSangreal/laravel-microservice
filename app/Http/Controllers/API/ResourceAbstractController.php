@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -22,9 +23,9 @@ abstract class ResourceAbstractController extends Controller
     {
         $validated = $this->validate($request, $this->rulesStore());
 
-        $value = $this->model()::create($validated);
-        $value->refresh();
-        return $value;
+        $category = $this->model()::create($validated);
+        $category->refresh();
+        return $category;
     }
 
     protected function findOrFail($id)
@@ -34,31 +35,32 @@ abstract class ResourceAbstractController extends Controller
         return $this->model()::where($keyName, $id)->firstOrFail();
     }
 
-    /*
-
-    public function show(Category $category): JsonResponse
+    public function show($id): JsonResponse
     {
+        $category = $this->findOrFail($id);
+
         return response()->json($category);
     }
 
-    public function update(Request $request, Category $category): JsonResponse
+    public function update(Request $request, $id)
     {
-        $serialized = $request->only(array_keys($this->rules));
+        $values = $this->validate($request, $this->rulesStore());
 
-        $this->validate($request, $this->rules);
+        $category = $this->findOrFail($id);
+        $category->update($values);
 
-        $category->update($serialized);
+        $category->refresh();
 
-        return response()->json($category);
-
+        return $category;
     }
 
-    public function destroy(Category $category): JsonResponse
+    public function destroy($id)
     {
+        $category = $this->findOrFail($id);
+
         $category->delete();
 
         return response()->json([], 204);
 
     }
-    */
 }
