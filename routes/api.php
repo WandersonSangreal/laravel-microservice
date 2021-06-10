@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CastMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,5 +28,6 @@ Route::group([], function () {
 
     Route::resource('categories', CategoryController::class, $exception);
     Route::resource('genders', GenderController::class, $exception);
+    Route::resource('cast_members', CastMember::class, $exception);
 
 });

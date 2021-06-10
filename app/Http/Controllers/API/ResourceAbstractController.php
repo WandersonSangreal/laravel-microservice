@@ -54,7 +54,7 @@ abstract class ResourceAbstractController extends Controller
         return $category;
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $category = $this->findOrFail($id);
 
