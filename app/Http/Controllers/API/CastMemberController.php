@@ -15,12 +15,7 @@ class CastMemberController extends ResourceAbstractController
     {
         return [
             'name' => 'required|max:255',
-            'type' => 'required:min:1|max:2'
+            'type' => 'required|numeric|between:1,2'
         ];
-    }
-
-    public function index()
-    {
-        return parent::index();
     }
 }
