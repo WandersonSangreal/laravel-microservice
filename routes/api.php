@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\VideoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,5 +30,6 @@ Route::group([], function () {
     Route::resource('categories', CategoryController::class, $exception);
     Route::resource('genders', GenderController::class, $exception);
     Route::resource('cast_members', CastMemberController::class, $exception);
+    Route::resource('videos', VideoController::class, $exception);
 
 });
