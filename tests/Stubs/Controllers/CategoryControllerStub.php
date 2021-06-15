@@ -20,4 +20,12 @@ class CategoryControllerStub extends ResourceAbstractController
             'description' => 'nullable'
         ];
     }
+
+    protected function rulesUpdate(): array
+    {
+        return [
+            'name' => 'required|max:255',
+            'description' => 'nullable'
+        ];
+    }
 }

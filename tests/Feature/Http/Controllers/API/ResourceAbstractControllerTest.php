@@ -87,11 +87,7 @@ class ResourceAbstractControllerTest extends TestCase
     {
         $category = CategoryStub::create(['name' => 'test_name', 'description' => 'test_description']);
 
-        $reflectionClass = new ReflectionClass(ResourceAbstractController::class);
-        $reflectionMethod = $reflectionClass->getMethod('findOrFail');
-        $reflectionMethod->setAccessible(true);
-
-        $value = $reflectionMethod->invokeArgs($this->controller, [$category->id]);
+        $value = $this->controller->show($category->id);
 
         $this->assertEquals(CategoryStub::find(1)->toArray(), $value->toArray());
     }

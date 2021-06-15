@@ -13,6 +13,9 @@ class CastMember extends Model
     use HasFactory;
     use SoftDeletes;
 
+    const TYPE_DIRECTOR = 1;
+    const TYPE_ACTOR = 2;
+
     public $incrementing = false;
 
     protected $casts = ['id' => 'string'];

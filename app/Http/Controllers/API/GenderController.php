@@ -3,54 +3,28 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Gender;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use Illuminate\Validation\ValidationException;
 
-class GenderController extends Controller
+class GenderController extends ResourceAbstractController
 {
-    private $rules = [
-        'name' => 'required|max:255',
-        'is_active' => 'boolean',
-    ];
 
-    public function index(): JsonResponse
+    protected function model(): string
     {
-        return response()->json(Gender::all());
+        return Gender::class;
     }
 
-    public function store(Request $request): JsonResponse
+    protected function rulesStore(): array
     {
-        $serialized = $request->only(array_keys($this->rules));
-
-        $this->validate($request, $this->rules);
-        $gender = Gender::create($serialized);
-        $gender->refresh();
-
-        return response()->json($gender, 201);
+        return [
+            'name' => 'required|max:255',
+            'is_active' => 'boolean',
+        ];
     }
 
-    public function show(Gender $gender): JsonResponse
+    protected function rulesUpdate(): array
     {
-        return response()->json($gender);
-    }
-
-    public function update(Request $request, Gender $gender): JsonResponse
-    {
-        $serialized = $request->only(array_keys($this->rules));
-
-        $this->validate($request, $this->rules);
-
-        $gender->update($serialized);
-
-        return response()->json($gender);
-    }
-
-    public function destroy(Gender $gender): JsonResponse
-    {
-        $gender->delete();
-
-        return response()->json([], 204);
+        return [
+            'name' => 'required|max:255',
+            'is_active' => 'boolean',
+        ];
     }
 }
