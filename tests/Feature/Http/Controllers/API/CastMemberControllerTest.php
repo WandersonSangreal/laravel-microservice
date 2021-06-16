@@ -71,13 +71,13 @@ class CastMemberControllerTest extends TestCase
 
     public function test_update()
     {
-        $data = ['name' => 'test', 'type' => 1];
+        $data = ['name' => 'test', 'type' => CastMember::TYPE_DIRECTOR];
 
         $response = $this->assertUpdate($data, $data + ['deleted_at' => null]);
 
         $response->assertJsonStructure(['created_at', 'updated_at']);
 
-        $data['type'] = 2;
+        $data['type'] = CastMember::TYPE_ACTOR;
 
         $this->assertUpdate($data, $data);
 

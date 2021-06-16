@@ -7,19 +7,34 @@ use Illuminate\Http\Request;
 
 class VideoController extends ResourceAbstractController
 {
+    private $rules;
+
+    public function __construct()
+    {
+        $rating = implode(',', Video::RATING_LIST);
+
+        $this->rules = [
+            'title' => 'required|max:255',
+            'description' => 'required',
+            'year_launched' => 'required|date_format:Y',
+            'opened' => 'boolean',
+            'rating' => "required|in:$rating",
+            'duration' => 'required|integer',
+        ];
+    }
 
     protected function model(): string
     {
         return Video::class;
     }
 
-    protected function rulesStore()
+    protected function rulesStore(): array
     {
-        // TODO: Implement rulesStore() method.
+        return $this->rules;
     }
 
-    protected function rulesUpdate()
+    protected function rulesUpdate(): array
     {
-        // TODO: Implement rulesUpdate() method.
+        return $this->rules;
     }
 }

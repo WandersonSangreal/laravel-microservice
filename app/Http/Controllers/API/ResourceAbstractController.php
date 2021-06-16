@@ -50,7 +50,7 @@ abstract class ResourceAbstractController extends Controller
         $item = $this->findOrFail($id);
         $item->update($values);
 
-        $item->refresh();
+        # $item->refresh();
 
         return $item;
     }
