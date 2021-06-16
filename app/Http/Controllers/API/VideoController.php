@@ -20,7 +20,33 @@ class VideoController extends ResourceAbstractController
             'opened' => 'boolean',
             'rating' => "required|in:$rating",
             'duration' => 'required|integer',
+            'categories_id' => 'required|array|exists:categories,id',
+            'genres_id' => 'required|array|exists:genres,id'
         ];
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $this->validate($request, $this->rulesStore());
+
+        $item = $this->model()::create($validated);
+        $item->categories()->sync($request->get('categories_id'));
+        $item->genres()->sync($request->get('genres_id'));
+        $item->refresh();
+        return $item;
+    }
+
+    public function update(Request $request, $id)
+    {
+        $values = $this->validate($request, $this->rulesStore());
+
+        $item = $this->findOrFail($id);
+        $item->update($values);
+
+        $item->categories()->sync($request->get('categories_id'));
+        $item->genres()->sync($request->get('genres_id'));
+
+        return $item;
     }
 
     protected function model(): string

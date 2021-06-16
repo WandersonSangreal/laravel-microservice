@@ -2,13 +2,13 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Gender;
+use App\Models\Genre;
 use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use PHPUnit\Framework\TestCase;
 
-class GenderUnitTest extends TestCase
+class GenreUnitTest extends TestCase
 {
     private $gender;
 
@@ -16,7 +16,7 @@ class GenderUnitTest extends TestCase
     {
         parent::setUp();
 
-        $this->gender = new Gender();
+        $this->gender = new Genre();
     }
 
     public function test_fillable_attribute()
@@ -34,7 +34,7 @@ class GenderUnitTest extends TestCase
     {
         $traits = [Uuid::class, HasFactory::class, SoftDeletes::class];
 
-        $genderTraists = array_keys(class_uses(Gender::class));
+        $genderTraists = array_keys(class_uses(Genre::class));
 
         array_multisort($traits, $genderTraists);
 

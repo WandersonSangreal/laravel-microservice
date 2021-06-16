@@ -4,7 +4,7 @@ use App\Http\Controllers\API\VideoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\API\GenderController;
+use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\CastMemberController;
 
@@ -28,7 +28,7 @@ Route::group([], function () {
     $exception = ['except' => ['create', 'edit']];
 
     Route::resource('categories', CategoryController::class, $exception);
-    Route::resource('genders', GenderController::class, $exception);
+    Route::resource('genres', GenreController::class, $exception);
     Route::resource('cast_members', CastMemberController::class, $exception);
     Route::resource('videos', VideoController::class, $exception);
 

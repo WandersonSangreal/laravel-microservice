@@ -2,14 +2,14 @@
 
 namespace Tests\Feature\Models;
 
-use App\Models\Gender;
+use App\Models\Genre;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
-class GenderTest extends TestCase
+class GenreTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -17,9 +17,9 @@ class GenderTest extends TestCase
     {
         $keys = ['id', 'name', 'is_active', 'created_at', 'updated_at', 'deleted_at'];
 
-        Gender::factory(1)->create();
+        Genre::factory(1)->create();
 
-        $genders = Gender::all();
+        $genders = Genre::all();
 
         $this->assertCount(1, $genders);
 
@@ -31,17 +31,17 @@ class GenderTest extends TestCase
 
     public function test_create()
     {
-        $gender = Gender::create(['name' => 'test']);
+        $gender = Genre::create(['name' => 'test']);
         $gender->refresh();
 
         $this->assertEquals('test', $gender->name);
         $this->assertTrue($gender->is_active);
         $this->assertTrue(Uuid::isValid($gender->id));
 
-        $gender = Gender::create(['name' => 'test', 'is_active' => false]);
+        $gender = Genre::create(['name' => 'test', 'is_active' => false]);
         $this->assertFalse($gender->is_active);
 
-        $gender = Gender::create(['name' => 'test', 'is_active' => true]);
+        $gender = Genre::create(['name' => 'test', 'is_active' => true]);
         $this->assertTrue($gender->is_active);
     }
 
@@ -50,7 +50,7 @@ class GenderTest extends TestCase
         $create = ['is_active' => false];
         $values = ['name' => 'test_name_updated', 'is_active' => true];
 
-        $gender = Gender::factory()->create($create)->first();
+        $gender = Genre::factory()->create($create)->first();
 
         $gender->update($values);
 
@@ -62,15 +62,15 @@ class GenderTest extends TestCase
 
     public function test_delete()
     {
-        $gender = Gender::factory(1)->create()->first();
+        $gender = Genre::factory(1)->create()->first();
 
-        $this->assertCount(1, Gender::all());
+        $this->assertCount(1, Genre::all());
 
         $gender->delete();
 
-        $this->assertCount(0, Gender::all());
+        $this->assertCount(0, Genre::all());
 
-        $this->assertCount(1, Gender::onlyTrashed()->get());
+        $this->assertCount(1, Genre::onlyTrashed()->get());
 
     }
 }

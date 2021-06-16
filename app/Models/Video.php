@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Video extends Model
@@ -20,5 +21,15 @@ class Video extends Model
     protected $fillable = ['title', 'description', 'year_launched', 'opened', 'rating', 'duration'];
 
     protected $casts = ['id' => 'string', 'opened' => 'boolean', 'year_launched' => 'integer', 'duration' => 'integer'];
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
+    public function genres(): BelongsToMany
+    {
+        return $this->belongsToMany(Gender::class);
+    }
 
 }

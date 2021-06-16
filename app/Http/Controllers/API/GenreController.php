@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Gender;
+use App\Models\Genre;
 
-class GenderController extends ResourceAbstractController
+class GenreController extends ResourceAbstractController
 {
 
     protected function model(): string
     {
-        return Gender::class;
+        return Genre::class;
     }
 
     protected function rulesStore(): array

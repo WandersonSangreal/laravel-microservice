@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers\API;
 
-use App\Models\Gender;
+use App\Models\Genre;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Testing\TestResponse;
@@ -10,7 +10,7 @@ use Tests\TestCase;
 use Tests\Traits\TestSaves;
 use Tests\Traits\TestValidations;
 
-class GenderControllerTest extends TestCase
+class GenreControllerTest extends TestCase
 {
     use DatabaseMigrations, TestValidations, TestSaves;
 
@@ -20,7 +20,7 @@ class GenderControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->gender = Gender::factory()->create();
+        $this->gender = Genre::factory()->create();
     }
 
     public function test_index()
@@ -69,7 +69,7 @@ class GenderControllerTest extends TestCase
 
     public function test_update()
     {
-        $this->gender = Gender::factory()->create(['name' => 'test', 'is_active' => false]);
+        $this->gender = Genre::factory()->create(['name' => 'test', 'is_active' => false]);
 
         $data = ['name' => 'test_world', 'is_active' => true];
 
@@ -109,7 +109,7 @@ class GenderControllerTest extends TestCase
 
     protected function model(): string
     {
-        return Gender::class;
+        return Genre::class;
     }
 
 }
