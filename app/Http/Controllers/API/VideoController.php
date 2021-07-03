@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Video;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class VideoController extends ResourceAbstractController
 {
@@ -29,9 +31,13 @@ class VideoController extends ResourceAbstractController
     {
         $validated = $this->validate($request, $this->rulesStore());
 
-        $item = $this->model()::create($validated);
-        $item->categories()->sync($request->get('categories_id'));
-        $item->genres()->sync($request->get('genres_id'));
+        $item = DB::transaction(function () use ($validated, $request) {
+            $item = $this->model()::create($validated);
+            self::handleRelations($item, $request);
+            # throw new Exception();
+            return $item;
+        });
+
         $item->refresh();
         return $item;
     }
@@ -41,12 +47,20 @@ class VideoController extends ResourceAbstractController
         $values = $this->validate($request, $this->rulesStore());
 
         $item = $this->findOrFail($id);
-        $item->update($values);
 
-        $item->categories()->sync($request->get('categories_id'));
-        $item->genres()->sync($request->get('genres_id'));
+        $item = DB::transaction(function () use ($item, $values, $request) {
+            $item->update($values);
+            self::handleRelations($item, $request);
+            return $item;
+        });
 
         return $item;
+    }
+
+    protected function handleRelations($item, Request $request)
+    {
+        $item->categories()->sync($request->get('categories_id'));
+        $item->genres()->sync($request->get('genres_id'));
     }
 
     protected function model(): string

@@ -14,27 +14,27 @@ class GenreControllerTest extends TestCase
 {
     use DatabaseMigrations, TestValidations, TestSaves;
 
-    private $gender;
+    private $genre;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->gender = Genre::factory()->create();
+        $this->genre = Genre::factory()->create();
     }
 
     public function test_index()
     {
-        $response = $this->get(route('genders.index'));
+        $response = $this->get(route('genres.index'));
 
-        $response->assertStatus(200)->assertJson([$this->gender->toArray()]);
+        $response->assertStatus(200)->assertJson([$this->genre->toArray()]);
     }
 
     public function test_show()
     {
-        $response = $this->get(route('genders.show', ['gender' => $this->gender->id]));
+        $response = $this->get(route('genres.show', ['genre' => $this->genre->id]));
 
-        $response->assertStatus(200)->assertJson($this->gender->toArray());
+        $response->assertStatus(200)->assertJson($this->genre->toArray());
     }
 
     public function test_invalidation_values()
@@ -51,6 +51,14 @@ class GenreControllerTest extends TestCase
         $data = ['is_active' => 'a'];
         $this->assertInvalidationStoreAction($data, 'boolean');
         $this->assertInvalidationUpdateAction($data, 'boolean');
+
+        $data = ['categories_id' => 'a'];
+        $this->assertInvalidationStoreAction($data, 'array');
+        $this->assertInvalidationUpdateAction($data, 'array');
+
+        $data = ['categories_id' => ['teste']];
+        $this->assertInvalidationStoreAction($data, 'exists');
+        $this->assertInvalidationUpdateAction($data, 'exists');
 
     }
 
@@ -69,7 +77,7 @@ class GenreControllerTest extends TestCase
 
     public function test_update()
     {
-        $this->gender = Genre::factory()->create(['name' => 'test', 'is_active' => false]);
+        $this->genre = Genre::factory()->create(['name' => 'test', 'is_active' => false]);
 
         $data = ['name' => 'test_world', 'is_active' => true];
 
@@ -89,22 +97,22 @@ class GenreControllerTest extends TestCase
 
     public function test_destroy()
     {
-        $response = $this->json('DELETE', route('genders.destroy', ['gender' => $this->gender->id]));
+        $response = $this->json('DELETE', route('genres.destroy', ['genre' => $this->genre->id]));
 
         $response->assertStatus(204);
 
-        $this->assertSoftDeleted($this->gender);
+        $this->assertSoftDeleted($this->genre);
 
     }
 
     protected function routeStore(): string
     {
-        return route('genders.store');
+        return route('genres.store');
     }
 
     protected function routeUpdate(): string
     {
-        return route('genders.update', ['gender' => $this->gender->id]);
+        return route('genres.update', ['genre' => $this->genre->id]);
     }
 
     protected function model(): string
