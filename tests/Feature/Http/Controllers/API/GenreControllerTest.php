@@ -113,11 +113,6 @@ class GenreControllerTest extends TestCase
 
     }
 
-    protected function assetHasCategory($genre, $category)
-    {
-        $this->assertDatabaseHas('category_genre', ['genre_id' => $genre, 'category_id' => $category]);
-    }
-
     public function test_destroy()
     {
         $response = $this->json('DELETE', route('genres.destroy', ['genre' => $this->genre->id]));
@@ -126,6 +121,33 @@ class GenreControllerTest extends TestCase
 
         $this->assertSoftDeleted($this->genre);
 
+    }
+
+    public function test_sync_categories()
+    {
+        $categoriesID = Category::factory(3)->create()->pluck('id')->toArray();
+
+        $sendValues = ['name' => 'test', 'categories_id' => [$categoriesID[0]]];
+
+        $response = $this->json('POST', $this->routeStore(), $sendValues);
+
+        $this->assertDatabaseHas('category_genre', ['category_id' => $categoriesID[0], 'genre_id' => $response->json('id')]);
+
+        $sendValues = ['name' => 'test', 'categories_id' => [$categoriesID[1], $categoriesID[2]]];
+
+        $response = $this->json('PUT', route('genres.update', ['genre' => $response->json('id')]), $sendValues);
+
+        $this->assertDatabaseMissing('category_genre', ['category_id' => $categoriesID[0], 'genre_id' => $response->json('id')]);
+
+        $this->assertDatabaseHas('category_genre', ['category_id' => $categoriesID[1], 'genre_id' => $response->json('id')]);
+
+        $this->assertDatabaseHas('category_genre', ['category_id' => $categoriesID[2], 'genre_id' => $response->json('id')]);
+
+    }
+
+    protected function assetHasCategory($genre, $category)
+    {
+        $this->assertDatabaseHas('category_genre', ['genre_id' => $genre, 'category_id' => $category]);
     }
 
     protected function routeStore(): string
