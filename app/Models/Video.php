@@ -29,7 +29,7 @@ class Video extends Model
 
     public function genres(): BelongsToMany
     {
-        return $this->belongsToMany(Gender::class);
+        return $this->belongsToMany(Genre::class);
     }
 
 }

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Http\Controllers\API;
 
+use App\Models\Category;
+use App\Models\Genre;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -12,14 +14,14 @@ class VideoControllerTest extends TestCase
 {
     use DatabaseMigrations, TestValidations, TestSaves;
 
-    private $castMember;
+    private $video;
     private $sendValue;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->castMember = Video::factory()->create();
+        $this->video = Video::factory()->create();
         $this->sendValue = [
             'title' => 'title',
             'description' => 'description',
@@ -33,14 +35,14 @@ class VideoControllerTest extends TestCase
     {
         $response = $this->get(route('videos.index'));
 
-        $response->assertStatus(200)->assertJson([$this->castMember->toArray()]);
+        $response->assertStatus(200)->assertJson([$this->video->toArray()]);
     }
 
     public function test_show()
     {
-        $response = $this->get(route('videos.show', ['video' => $this->castMember->id]));
+        $response = $this->get(route('videos.show', ['video' => $this->video->id]));
 
-        $response->assertStatus(200)->assertJson($this->castMember->toArray());
+        $response->assertStatus(200)->assertJson($this->video->toArray());
     }
 
     public function test_invalidation_required()
@@ -141,31 +143,59 @@ class VideoControllerTest extends TestCase
 
     }
 
+    public function test_soft_delete_exists()
+    {
+        $genre = Genre::factory()->create();
+        $genre->delete();
+
+        $data = ['genres_id' => [$genre->id]];
+
+        $this->assertInvalidationStoreAction($data, 'exists');
+        $this->assertInvalidationUpdateAction($data, 'exists');
+
+        $category = Category::factory()->create();
+        $category->delete();
+
+        $data = ['categories_id' => [$category->id]];
+
+        $this->assertInvalidationStoreAction($data, 'exists');
+        $this->assertInvalidationUpdateAction($data, 'exists');
+
+    }
+
     public function test_save()
     {
+        $category = Category::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $genre->categories()->sync((array)$category->id);
 
         $data = [
             [
-                'send_data' => $this->sendValue,
+                'send_data' => $this->sendValue + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]],
                 'test_data' => $this->sendValue + ['opened' => false]
             ],
             [
-                'send_data' => $this->sendValue + ['opened' => true],
+                'send_data' => $this->sendValue + ['opened' => true, 'categories_id' => [$category->id], 'genres_id' => [$genre->id]],
                 'test_data' => $this->sendValue + ['opened' => true]
             ],
             [
-                'send_data' => $this->sendValue + ['rating' => Video::RATING_LIST[2]],
-                'test_data' => $this->sendValue + ['rating' => Video::RATING_LIST[2]]
+                'send_data' => $this->sendValue + ['rating' => Video::RATING_LIST[1], 'categories_id' => [$category->id], 'genres_id' => [$genre->id]],
+                'test_data' => $this->sendValue + ['rating' => Video::RATING_LIST[1]]
             ],
         ];
 
         foreach ($data as $value) {
 
-            $response = $this->assertStore($value['send_data'], $value['test_data']);
+            $response = $this->assertStore($value['send_data'], $value['test_data'] + ['deleted_at' => null]);
 
             $response->assertJsonStructure(['created_at', 'updated_at']);
 
-            $response = $this->assertStore($value['send_data'], $value['test_data']);
+            $this->assertHasCategory($response->json('id'), current($value['send_data']['categories_id']));
+
+            $this->assertHasGenre($response->json('id'), current($value['send_data']['genres_id']));
+
+            $response = $this->assertStore($value['send_data'], $value['test_data'] + ['deleted_at' => null]);
 
             $response->assertJsonStructure(['created_at', 'updated_at']);
 
@@ -175,11 +205,21 @@ class VideoControllerTest extends TestCase
 
     public function test_destroy()
     {
-        $response = $this->json('DELETE', route('videos.destroy', ['video' => $this->castMember->id]));
+        $response = $this->json('DELETE', route('videos.destroy', ['video' => $this->video->id]));
 
         $response->assertStatus(204);
 
-        $this->assertSoftDeleted($this->castMember);
+        $this->assertSoftDeleted($this->video);
+    }
+
+    protected function assertHasCategory($videoID, $categoryID)
+    {
+        $this->assertDatabaseHas('category_video', ['video_id' => $videoID, 'category_id' => $categoryID]);
+    }
+
+    protected function assertHasGenre($videoID, $genreID)
+    {
+        $this->assertDatabaseHas('genre_video', ['video_id' => $videoID, 'genre_id' => $genreID]);
     }
 
     protected function routeStore(): string
@@ -189,7 +229,7 @@ class VideoControllerTest extends TestCase
 
     protected function routeUpdate(): string
     {
-        return route('videos.update', ['video' => $this->castMember->id]);
+        return route('videos.update', ['video' => $this->video->id]);
     }
 
     protected function model(): string

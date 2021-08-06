@@ -22,8 +22,8 @@ class VideoController extends ResourceAbstractController
             'opened' => 'boolean',
             'rating' => "required|in:$rating",
             'duration' => 'required|integer',
-            'categories_id' => 'required|array|exists:categories,id',
-            'genres_id' => 'required|array|exists:genres,id'
+            'categories_id' => 'required|array|exists:categories,id,deleted_at,NULL',
+            'genres_id' => 'required|array|exists:genres,id,deleted_at,NULL'
         ];
     }
 
