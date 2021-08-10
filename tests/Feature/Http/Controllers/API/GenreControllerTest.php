@@ -5,7 +5,6 @@ namespace Tests\Feature\Http\Controllers\API;
 use App\Http\Controllers\API\GenreController;
 use App\Models\Category;
 use App\Models\Genre;
-use http\Env\Request;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Testing\TestResponse;
