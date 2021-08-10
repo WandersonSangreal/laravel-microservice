@@ -25,7 +25,7 @@ class VideoSeeder extends Seeder
             }
             $categoriesID = array_unique($categoriesID);
             $video->categories()->attach($categoriesID);
-            $video->genres()->attach($genres);
+            $video->genres()->attach($subGenres->pluck('id')->toArray());
         });
     }
 }
