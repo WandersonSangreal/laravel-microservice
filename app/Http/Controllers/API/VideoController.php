@@ -38,12 +38,7 @@ class VideoController extends ResourceAbstractController
 
         $validated = $this->validate($request, $this->rulesStore());
 
-        $item = DB::transaction(function () use ($validated, $request) {
-            $item = $this->model()::create($validated);
-            self::handleRelations($item, $request);
-            # throw new Exception();
-            return $item;
-        });
+        $item = $this->model()::create($validated);
 
         $item->refresh();
         return $item;
@@ -57,11 +52,7 @@ class VideoController extends ResourceAbstractController
 
         $item = $this->findOrFail($id);
 
-        $item = DB::transaction(function () use ($item, $values, $request) {
-            $item->update($values);
-            self::handleRelations($item, $request);
-            return $item;
-        });
+        $item->update($values);
 
         return $item;
     }
@@ -70,12 +61,6 @@ class VideoController extends ResourceAbstractController
     {
         $values = is_array($request->get('categories_id')) ? $request->get('categories_id') : [];
         $this->rules['genres_id'][] = new GenresHasCategoriesRule($values);
-    }
-
-    protected function handleRelations($item, Request $request)
-    {
-        $item->categories()->sync($request->get('categories_id'));
-        $item->genres()->sync($request->get('genres_id'));
     }
 
     protected function model(): string
