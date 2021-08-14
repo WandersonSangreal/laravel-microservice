@@ -30,6 +30,8 @@ class GenresHasCategoriesRule implements Rule
      */
     public function passes($attribute, $value)
     {
+        $value = is_array($value) ? $value : [];
+
         $this->genresID = array_unique($value);
 
         if (!sizeof($this->genresID) || !sizeof($this->categoriesID))
@@ -66,7 +68,7 @@ class GenresHasCategoriesRule implements Rule
      *
      * @return string
      */
-    public function message()
+    public function message(): string
     {
         return 'A genre ID must be related at least a category ID.';
     }
