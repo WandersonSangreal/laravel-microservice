@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\UploadFiles;
 use App\Models\Traits\Uuid;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +17,7 @@ class Video extends Model
     use Uuid;
     use HasFactory;
     use SoftDeletes;
+    use UploadFiles;
 
     const RATING_LIST = ['L', '10', '12', '14', '16', '18'];
 
@@ -25,15 +27,23 @@ class Video extends Model
 
     protected $casts = ['id' => 'string', 'opened' => 'boolean', 'year_launched' => 'integer', 'duration' => 'integer'];
 
+    public static $fileFields = ['video_file'];
+
     public static function create(array $attributes = []): Model|Builder
     {
+        $files = self::extractFiles($attributes);
+
         try {
 
             DB::beginTransaction();
 
+            /**
+             * @var Video $creation
+             */
             $creation = static::query()->create($attributes);
             static::handleRelations($creation, $attributes);
-            # todo upload
+
+            $creation->uploadFiles($files);
 
             DB::commit();
 
@@ -42,7 +52,7 @@ class Video extends Model
         } catch (Exception $exception) {
 
             if (isset($creation)) {
-                # todo delete file
+                $creation->deleteFiles($files);
             }
 
             DB::rollBack();
@@ -54,6 +64,8 @@ class Video extends Model
 
     public function update(array $attributes = [], array $options = [])
     {
+        $files = self::extractFiles($attributes);
+
         try {
 
             DB::beginTransaction();
@@ -102,4 +114,8 @@ class Video extends Model
         return $this->belongsToMany(Genre::class)->withTrashed();
     }
 
+    protected function uploadDir()
+    {
+        return $this->id;
+    }
 }

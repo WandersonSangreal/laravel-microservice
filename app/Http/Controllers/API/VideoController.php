@@ -28,7 +28,8 @@ class VideoController extends ResourceAbstractController
                 'required',
                 'array',
                 'exists:genres,id,deleted_at,NULL'
-            ]
+            ],
+            'video_file' => 'required'
         ];
     }
 

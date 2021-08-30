@@ -13,25 +13,7 @@ class UploadFilesStub extends Model
 {
     use UploadFiles;
 
-    /*
-    protected $table = 'category_stubs';
-    protected $fillable = ['name', 'description'];
-
-    public static function createTable()
-    {
-        Schema::create('category_stubs', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->timestamps();
-        });
-    }
-
-    public static function dropTable()
-    {
-        Schema::dropIfExists('category_stubs');
-    }
-    */
+    public static $fileFields = ['file1', 'file2'];
 
     protected function uploadDir(): string
     {
