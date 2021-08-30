@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers\API;
 use App\Models\Category;
 use App\Models\Genre;
 use App\Models\Video;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use Tests\Traits\TestSaves;
@@ -60,6 +61,26 @@ class VideoControllerTest extends TestCase
 
         $this->assertInvalidationStoreAction($data, 'required');
         $this->assertInvalidationUpdateAction($data, 'required');
+
+    }
+
+    public function test_invalidation_file()
+    {
+
+        $data = ['video_file' => UploadedFile::fake()->create('teste.avi')];
+
+        $this->assertInvalidationStoreAction($data, 'mimes', ['values' => 'mp4']);
+        $this->assertInvalidationUpdateAction($data, 'mimes', ['values' => 'mp4']);
+
+    }
+
+    public function test_invalidation_file_size()
+    {
+
+        $data = ['video_file' => UploadedFile::fake()->create('teste.avi')->size(20000)];
+
+        $this->assertInvalidationStoreAction($data, 'max.file', ['max' => '5000']);
+        $this->assertInvalidationUpdateAction($data, 'max.file', ['max' => '5000']);
 
     }
 

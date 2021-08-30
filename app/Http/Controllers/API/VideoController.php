@@ -29,7 +29,7 @@ class VideoController extends ResourceAbstractController
                 'array',
                 'exists:genres,id,deleted_at,NULL'
             ],
-            'video_file' => 'required'
+            'video_file' => 'nullable|mimes:mp4|max:5000'
         ];
     }
 
