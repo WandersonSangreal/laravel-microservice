@@ -4,13 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Video;
 use App\Rules\GenresHasCategoriesRule;
-use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class VideoController extends ResourceAbstractController
 {
-    private $rules;
+    private array $rules;
 
     public function __construct()
     {

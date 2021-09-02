@@ -7,6 +7,7 @@ use App\Models\Genre;
 use App\Models\Video;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Tests\Traits\TestSaves;
 use Tests\Traits\TestValidations;
@@ -186,14 +187,18 @@ class VideoControllerTest extends TestCase
 
     public function test_save()
     {
+        Storage::fake();
+
         $category = Category::factory()->create();
         $genre = Genre::factory()->create();
 
         $genre->categories()->sync((array)$category->id);
 
+        $video = ['video_file' => UploadedFile::fake()->create('teste.mp4')];
+
         $data = [
             [
-                'send_data' => $this->sendValue + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]],
+                'send_data' => $this->sendValue + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]] + $video,
                 'test_data' => $this->sendValue + ['opened' => false]
             ],
             [
@@ -209,6 +214,18 @@ class VideoControllerTest extends TestCase
         foreach ($data as $value) {
 
             $response = $this->assertStore($value['send_data'], $value['test_data'] + ['deleted_at' => null]);
+
+            if (array_key_exists('video_file', $value['send_data'])) {
+
+                $files = !is_array($value['send_data']['video_file']) ? [$value['send_data']['video_file']] : $value['send_data']['video_file'];
+
+                foreach ($files as $file) {
+
+                    Storage::assertExists("{$response->json('id')}/{$file->hashName()}");
+
+                }
+
+            }
 
             $response->assertJsonStructure(['created_at', 'updated_at']);
 
