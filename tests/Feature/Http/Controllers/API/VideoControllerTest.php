@@ -217,13 +217,9 @@ class VideoControllerTest extends TestCase
 
             if (array_key_exists('video_file', $value['send_data'])) {
 
-                $files = !is_array($value['send_data']['video_file']) ? [$value['send_data']['video_file']] : $value['send_data']['video_file'];
+                $file = $value['send_data']['video_file'];
 
-                foreach ($files as $file) {
-
-                    Storage::assertExists("{$response->json('id')}/{$file->hashName()}");
-
-                }
+                Storage::assertExists("{$response->json('id')}/{$file->hashName()}");
 
             }
 
