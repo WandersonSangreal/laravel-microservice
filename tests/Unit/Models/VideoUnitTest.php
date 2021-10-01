@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Traits\UploadFiles;
 use App\Models\Video;
 use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,7 +22,7 @@ class VideoUnitTest extends TestCase
 
     public function test_fillable_attribute()
     {
-        $fillable = ['title', 'description', 'year_launched', 'opened', 'rating', 'duration'];
+        $fillable = ['title', 'description', 'year_launched', 'opened', 'rating', 'duration', 'video_file', 'thumb_file'];
 
         $videoFillable = $this->video->getFillable();
 
@@ -32,7 +33,7 @@ class VideoUnitTest extends TestCase
 
     public function test_if_use_traits()
     {
-        $traits = [Uuid::class, HasFactory::class, SoftDeletes::class];
+        $traits = [Uuid::class, HasFactory::class, SoftDeletes::class, UploadFiles::class];
 
         $videoTraists = array_keys(class_uses(Video::class));
 

@@ -23,11 +23,11 @@ class Video extends Model
 
     public $incrementing = false;
 
-    protected $fillable = ['title', 'description', 'year_launched', 'opened', 'rating', 'duration'];
+    protected $fillable = ['title', 'description', 'year_launched', 'opened', 'rating', 'duration', 'video_file', 'thumb_file'];
 
     protected $casts = ['id' => 'string', 'opened' => 'boolean', 'year_launched' => 'integer', 'duration' => 'integer'];
 
-    public static $fileFields = ['video_file'];
+    public static $fileFields = ['video_file', 'thumb_file'];
 
     public static function create(array $attributes = []): Model|Builder
     {

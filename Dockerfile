@@ -9,10 +9,12 @@ RUN apk add --no-cache openssl \
                freetype-dev \
                libjpeg-turbo-dev \
                libpng-dev \
+               libwebp-dev \
                git
 RUN docker-php-ext-install pdo pdo_mysql
-# RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
+RUN docker-php-ext-configure gd --enable-gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ --with-webp=/usr/include/
 RUN docker-php-ext-install -j$(nproc) gd
+# RUN docker-php-ext-enable gd
 
 RUN touch /home/www-data/.bashrc | echo "PS1='\w\$ '" >> /home/www-data/.bashrc
 
