@@ -4,12 +4,34 @@
 namespace App\Models\Traits;
 
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 trait UploadFiles
 {
+    public array $oldFiles = [];
+
     protected abstract function uploadDir();
+
+    public static function bootUploadFiles()
+    {
+        static::updating(function (Model $model) {
+
+            $updatedFiels = array_keys($model->getDirty()); # o que foi modificado
+            $updatedFiles = array_intersect($updatedFiels, self::$fileFields);
+
+            $files = Arr::where($updatedFiles, function ($file) use ($model) {
+                return $model->getOriginal($file); # valor antigo, antes do update
+            });
+
+            $model->oldFiles = array_map(function ($file) use ($model) {
+                return $model->getOriginal($file); # valor antigo, antes do update
+            }, $files);
+
+        });
+    }
 
     /**
      * @param UploadedFile[] $files
@@ -31,6 +53,11 @@ trait UploadFiles
         $file->store($this->uploadDir());
     }
 
+    public function deleteOldFiles()
+    {
+        $this->deleteFiles($this->oldFiles);
+    }
+
     public function deleteFiles(array $files)
     {
         foreach ($files as $file) {
@@ -49,7 +76,7 @@ trait UploadFiles
 
     }
 
-    public static function extractFiles(array &$attributes = [])
+    public static function extractFiles(array &$attributes = []): array
     {
         $files = [];
 
