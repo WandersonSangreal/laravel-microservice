@@ -35,7 +35,7 @@ class VideoUploadTest extends TestCase
 
         $files = [
             'thumb_file' => UploadedFile::fake()->image('thumb.jpg'),
-            'video_file' => UploadedFile::fake()->create('video.mp4')->size()
+            'video_file' => UploadedFile::fake()->create('video.mp4')->size(1)
         ];
 
         $video = Video::create($this->data + $files);
