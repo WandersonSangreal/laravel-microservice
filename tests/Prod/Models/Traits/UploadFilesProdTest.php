@@ -7,10 +7,12 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Tests\Stubs\Models\UploadFilesStub;
+use Tests\Traits\TestProd;
 use Tests\Traits\TestStorages;
 
 class UploadFilesProdTest extends TestCase
 {
+    use TestProd;
     use TestStorages;
 
     private UploadFilesStub $upload;
@@ -18,6 +20,8 @@ class UploadFilesProdTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->skipTestIfNotProd();
 
         $this->upload = new UploadFilesStub();
 
