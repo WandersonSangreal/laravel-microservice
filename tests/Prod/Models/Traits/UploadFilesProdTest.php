@@ -1,16 +1,18 @@
 <?php
 
-namespace Tests\Unit\Models\Traits;
+namespace Tests\Prod\Models\Traits;
 
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 use Tests\Stubs\Models\UploadFilesStub;
+use Tests\Traits\TestStorages;
 
-class UploadFilesUnitTest extends TestCase
+class UploadFilesProdTest extends TestCase
 {
+    use TestStorages;
+
     private UploadFilesStub $upload;
 
     protected function setUp(): void
@@ -18,12 +20,16 @@ class UploadFilesUnitTest extends TestCase
         parent::setUp();
 
         $this->upload = new UploadFilesStub();
+
+        Config::set('filesystems.default', 'gcs');
+
+        $this->deleteAllFiles();
+
     }
 
     public function test_upload_file()
     {
-        # Storage::fake();
-
+        Storage::fake();
         $file = UploadedFile::fake()->create('video.mp4');
 
         $this->upload->uploadFile($file);
@@ -34,7 +40,7 @@ class UploadFilesUnitTest extends TestCase
 
     public function test_upload_files()
     {
-        # Storage::fake();
+        Storage::fake();
 
         $file1 = UploadedFile::fake()->create('video1.mp4');
         $file2 = UploadedFile::fake()->create('video2.mp4');
@@ -48,7 +54,7 @@ class UploadFilesUnitTest extends TestCase
 
     public function test_delete_old_files()
     {
-        # Storage::fake();
+        Storage::fake();
 
         $file1 = UploadedFile::fake()->create('video1.mp4')->size(1);
         $file2 = UploadedFile::fake()->create('video2.mp4')->size(1);
@@ -68,7 +74,7 @@ class UploadFilesUnitTest extends TestCase
 
     public function test_delete_file()
     {
-        # Storage::fake();
+        Storage::fake();
         $file = UploadedFile::fake()->create('video.mp4');
 
         $this->upload->uploadFile($file);
@@ -80,7 +86,7 @@ class UploadFilesUnitTest extends TestCase
 
     public function test_delete_files()
     {
-        # Storage::fake();
+        Storage::fake();
 
         $file1 = UploadedFile::fake()->create('video1.mp4');
         $file2 = UploadedFile::fake()->create('video2.mp4');
@@ -90,35 +96,6 @@ class UploadFilesUnitTest extends TestCase
 
         Storage::assertMissing($file1->hashName());
         Storage::assertMissing($file2->hashName());
-
-    }
-
-    public function test_extract_files()
-    {
-        $attributes = [];
-
-        $files = UploadFilesStub::extractFiles($attributes);
-
-        $this->assertCount(0, $attributes);
-        $this->assertCount(0, $files);
-
-        $attributes = ['file1' => 'test'];
-
-        $files = UploadFilesStub::extractFiles($attributes);
-
-        $this->assertCount(1, $attributes);
-        $this->assertEquals(['file1' => 'test'], $attributes);
-        $this->assertCount(0, $files);
-
-        $file1 = UploadedFile::fake()->create('video1.mp4');
-        $attributes = ['file1' => $file1, 'other' => 'test'];
-
-        $files = UploadFilesStub::extractFiles($attributes);
-
-        $this->assertCount(2, $attributes);
-        $this->assertEquals(['file1' => $file1->hashName(), 'other' => 'test'], $attributes);
-        $this->assertCount(1, $files);
-        $this->assertEquals([$file1], $files);
 
     }
 
