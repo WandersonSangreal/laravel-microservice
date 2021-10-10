@@ -29,19 +29,31 @@ class VideoUploadTest extends TestCase
         ];
     }
 
+    public function test_create_with_basic_fields()
+    {
+        $video = Video::create($this->data);
+
+        $this->assertDatabaseHas(Video::class, $video->getOriginal());
+
+    }
+
     public function test_create_with_files()
     {
         Storage::fake();
 
         $files = [
             'thumb_file' => UploadedFile::fake()->image('thumb.jpg'),
-            'video_file' => UploadedFile::fake()->create('video.mp4')->size(1)
+            'video_file' => UploadedFile::fake()->create('video.mp4')->size(1),
+            'banner_file' => UploadedFile::fake()->image('banner.jpg'),
+            'trailer_file' => UploadedFile::fake()->create('trailer.mp4')->size(1),
         ];
 
         $video = Video::create($this->data + $files);
 
         Storage::assertExists("{$video->id}/{$video->thumb_file}");
         Storage::assertExists("{$video->id}/{$video->video_file}");
+        Storage::assertExists("{$video->id}/{$video->banner_file}");
+        Storage::assertExists("{$video->id}/{$video->trailer_file}");
     }
 
     public function test_create_if_rollback_files()
@@ -59,7 +71,9 @@ class VideoUploadTest extends TestCase
 
             $files = [
                 'thumb_file' => UploadedFile::fake()->image('thumb.jpg'),
-                'video_file' => UploadedFile::fake()->create('video.mp4')->size(1)
+                'video_file' => UploadedFile::fake()->create('video.mp4')->size(1),
+                'banner_file' => UploadedFile::fake()->image('banner.jpg'),
+                'trailer_file' => UploadedFile::fake()->create('trailer.mp4')->size(1),
             ];
 
             Video::create($this->data + $files);
@@ -76,6 +90,18 @@ class VideoUploadTest extends TestCase
 
     }
 
+    public function test_update_with_basic_fields()
+    {
+        $video = Video::factory()->create();
+
+        $video->update($this->data);
+
+        $this->assertDatabaseHas(Video::class, $video->getOriginal());
+
+        $this->assertTrue($video->title === $this->data['title']);
+
+    }
+
     public function test_update_with_files()
     {
 
@@ -83,21 +109,29 @@ class VideoUploadTest extends TestCase
 
         $video = Video::factory()->create();
 
-        $thumbFile = UploadedFile::fake()->image('thumb.jpg');
-        $videoFile = UploadedFile::fake()->create('video.mp4')->size(1);
+        $files = [
+            'thumb_file' => UploadedFile::fake()->image('thumb.jpg'),
+            'video_file' => UploadedFile::fake()->create('video.mp4')->size(1),
+            'banner_file' => UploadedFile::fake()->image('banner.jpg'),
+            'trailer_file' => UploadedFile::fake()->create('trailer.mp4')->size(1),
+        ];
 
-        $video->update($this->data + ['thumb_file' => $thumbFile, 'video_file' => $videoFile]);
+        $video->update($this->data + $files);
 
         Storage::assertExists("{$video->id}/{$video->thumb_file}");
         Storage::assertExists("{$video->id}/{$video->video_file}");
+        Storage::assertExists("{$video->id}/{$video->banner_file}");
+        Storage::assertExists("{$video->id}/{$video->trailer_file}");
 
         $newVideoFile = UploadedFile::fake()->create('video.mp4');
 
         $video->update($this->data + ['video_file' => $newVideoFile]);
 
-        Storage::assertExists("{$video->id}/{$thumbFile->hashName()}");
+        Storage::assertExists("{$video->id}/{$files['thumb_file']->hashName()}");
+        Storage::assertExists("{$video->id}/{$files['banner_file']->hashName()}");
+        Storage::assertExists("{$video->id}/{$files['trailer_file']->hashName()}");
         Storage::assertExists("{$video->id}/{$newVideoFile->hashName()}");
-        Storage::assertMissing("{$video->id}/{$videoFile->hashName()}");
+        Storage::assertMissing("{$video->id}/{$files['video_file']->hashName()}");
 
     }
 
@@ -118,7 +152,9 @@ class VideoUploadTest extends TestCase
 
             $files = [
                 'thumb_file' => UploadedFile::fake()->image('thumb.jpg'),
-                'video_file' => UploadedFile::fake()->create('video.mp4')->size(1)
+                'video_file' => UploadedFile::fake()->create('video.mp4')->size(1),
+                'banner_file' => UploadedFile::fake()->image('banner.jpg'),
+                'trailer_file' => UploadedFile::fake()->create('trailer.mp4')->size(1),
             ];
 
             $video->update($this->data + $files);
