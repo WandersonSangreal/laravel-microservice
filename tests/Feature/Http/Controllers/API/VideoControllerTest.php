@@ -231,16 +231,6 @@ class VideoControllerTest extends TestCase
 
             $response = $this->assertStore($value['send_data'], $value['test_data'] + $complements);
 
-            if (array_key_exists('video_file', $value['send_data'])) {
-
-                $file = $value['send_data']['video_file'];
-
-                Storage::assertExists("{$response->json('id')}/{$file->hashName()}");
-
-                var_dump($response->getContent());
-
-            }
-
             $response->assertJsonStructure(['created_at', 'updated_at']);
 
             $this->assertHasCategory($response->json('id'), current($value['send_data']['categories_id']));
