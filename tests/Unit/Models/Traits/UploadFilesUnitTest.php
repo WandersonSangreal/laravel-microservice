@@ -22,7 +22,7 @@ class UploadFilesUnitTest extends TestCase
 
     public function test_upload_file()
     {
-        # Storage::fake();
+        Storage::fake();
 
         $file = UploadedFile::fake()->create('video.mp4');
 
@@ -34,7 +34,7 @@ class UploadFilesUnitTest extends TestCase
 
     public function test_upload_files()
     {
-        # Storage::fake();
+        Storage::fake();
 
         $file1 = UploadedFile::fake()->create('video1.mp4');
         $file2 = UploadedFile::fake()->create('video2.mp4');
@@ -48,7 +48,7 @@ class UploadFilesUnitTest extends TestCase
 
     public function test_delete_old_files()
     {
-        # Storage::fake();
+        Storage::fake();
 
         $file1 = UploadedFile::fake()->create('video1.mp4')->size(1);
         $file2 = UploadedFile::fake()->create('video2.mp4')->size(1);
@@ -68,7 +68,8 @@ class UploadFilesUnitTest extends TestCase
 
     public function test_delete_file()
     {
-        # Storage::fake();
+        Storage::fake();
+
         $file = UploadedFile::fake()->create('video.mp4');
 
         $this->upload->uploadFile($file);
@@ -80,7 +81,7 @@ class UploadFilesUnitTest extends TestCase
 
     public function test_delete_files()
     {
-        # Storage::fake();
+        Storage::fake();
 
         $file1 = UploadedFile::fake()->create('video1.mp4');
         $file2 = UploadedFile::fake()->create('video2.mp4');

@@ -210,11 +210,9 @@ class VideoControllerTest extends TestCase
 
         $genre->categories()->sync((array)$category->id);
 
-        $video = ['video_file' => UploadedFile::fake()->create('teste.mp4')];
-
         $data = [
             [
-                'send_data' => $this->sendValue + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]] + $video,
+                'send_data' => $this->sendValue + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]],
                 'test_data' => $this->sendValue + ['opened' => false]
             ],
             [
@@ -229,13 +227,17 @@ class VideoControllerTest extends TestCase
 
         foreach ($data as $value) {
 
-            $response = $this->assertStore($value['send_data'], $value['test_data'] + ['deleted_at' => null]);
+            $complements = ['deleted_at' => null, 'video_file' => null, 'thumb_file' => null, 'banner_file' => null, 'trailer_file' => null];
+
+            $response = $this->assertStore($value['send_data'], $value['test_data'] + $complements);
 
             if (array_key_exists('video_file', $value['send_data'])) {
 
                 $file = $value['send_data']['video_file'];
 
                 Storage::assertExists("{$response->json('id')}/{$file->hashName()}");
+
+                var_dump($response->getContent());
 
             }
 
@@ -245,7 +247,7 @@ class VideoControllerTest extends TestCase
 
             $this->assertHasGenre($response->json('id'), current($value['send_data']['genres_id']));
 
-            $response = $this->assertStore($value['send_data'], $value['test_data'] + ['deleted_at' => null]);
+            # $response = $this->assertStore($value['send_data'], $value['test_data'] + ['deleted_at' => null, 'thumb_file' => null, 'video_file' => null, 'banner_file' => null, 'trailer_file' => null]);
 
             $response->assertJsonStructure(['created_at', 'updated_at']);
 

@@ -40,7 +40,7 @@ class VideoTest extends TestCase
         $videos = Video::all();
         $this->assertCount(1, $videos);
         $videosKeys = array_keys($videos->first()->getAttributes());
-        $this->assertEqualsCanonicalizing(['id', 'title', 'description', 'year_launched', 'opened', 'rating', 'video_file', 'thumb_file', 'duration', 'created_at', 'updated_at', 'deleted_at'], $videosKeys);
+        $this->assertEqualsCanonicalizing(['id', 'title', 'description', 'year_launched', 'opened', 'rating', 'video_file', 'thumb_file', 'banner_file', 'trailer_file', 'duration', 'created_at', 'updated_at', 'deleted_at'], $videosKeys);
 
     }
 
