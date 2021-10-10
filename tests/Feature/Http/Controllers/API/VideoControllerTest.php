@@ -78,10 +78,26 @@ class VideoControllerTest extends TestCase
     public function test_invalidation_file_size()
     {
 
-        $data = ['video_file' => UploadedFile::fake()->create('teste.avi')->size(20000)];
+        $data = ['video_file' => UploadedFile::fake()->create('teste.mp4')->size(52 * 1024 * 1024)];
 
-        $this->assertInvalidationStoreAction($data, 'max.file', ['max' => '5000']);
-        $this->assertInvalidationUpdateAction($data, 'max.file', ['max' => '5000']);
+        $this->assertInvalidationStoreAction($data, 'size.file', ['size' => 50 * 1024 * 1024]);
+        $this->assertInvalidationUpdateAction($data, 'size.file', ['size' => 50 * 1024 * 1024]);
+
+        $data = ['trailer_file' => UploadedFile::fake()->create('teste.mp4')->size(2 * 1024 * 1024)];
+
+        $this->assertInvalidationStoreAction($data, 'size.file', ['size' => 1 * 1024 * 1024]);
+        $this->assertInvalidationUpdateAction($data, 'size.file', ['size' => 1 * 1024 * 1024]);
+
+        $data = ['thumb_file' => UploadedFile::fake()->image('teste.jpg')->size(6 * 1024)];
+
+        $this->assertInvalidationStoreAction($data, 'size.file', ['size' => 5 * 1024]);
+        $this->assertInvalidationUpdateAction($data, 'size.file', ['size' => 5 * 1024]);
+
+        $data = ['banner_file' => UploadedFile::fake()->image('teste.jpg')->size(12 * 1024)];
+
+        $this->assertInvalidationStoreAction($data, 'size.file', ['size' => 10 * 1024]);
+        $this->assertInvalidationUpdateAction($data, 'size.file', ['size' => 10 * 1024]);
+
 
     }
 
