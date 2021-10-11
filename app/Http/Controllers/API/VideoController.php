@@ -27,10 +27,10 @@ class VideoController extends ResourceAbstractController
                 'array',
                 'exists:genres,id,deleted_at,NULL'
             ],
-            'video_file' => 'nullable|mimes:mp4|size:52428800',
-            'thumb_file' => 'nullable|mimes:jpg,jpeg,png|size:5120',
-            'banner_file' => 'nullable|mimes:jpg,jpeg,png|size:10240',
-            'trailer_file' => 'nullable|mimes:mp4|size:1048576',
+            'video_file' => 'nullable|mimes:mp4|max:' . Video::VIDEO_FILE_MAX_SIZE,
+            'thumb_file' => 'nullable|mimes:jpg,jpeg,png|max:' . Video::THUMB_FILE_MAX_SIZE,
+            'banner_file' => 'nullable|mimes:jpg,jpeg,png|max:' . Video::BANNER_FILE_MAX_SIZE,
+            'trailer_file' => 'nullable|mimes:mp4|max:' . Video::TRAILER_FILE_MAX_SIZE,
         ];
     }
 

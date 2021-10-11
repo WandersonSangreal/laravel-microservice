@@ -80,23 +80,23 @@ class VideoControllerTest extends TestCase
 
         $data = ['video_file' => UploadedFile::fake()->create('teste.mp4')->size(52 * 1024 * 1024)];
 
-        $this->assertInvalidationStoreAction($data, 'size.file', ['size' => 50 * 1024 * 1024]);
-        $this->assertInvalidationUpdateAction($data, 'size.file', ['size' => 50 * 1024 * 1024]);
+        $this->assertInvalidationStoreAction($data, 'max.file', ['max' => Video::VIDEO_FILE_MAX_SIZE]);
+        $this->assertInvalidationUpdateAction($data, 'max.file', ['max' => Video::VIDEO_FILE_MAX_SIZE]);
 
         $data = ['trailer_file' => UploadedFile::fake()->create('teste.mp4')->size(2 * 1024 * 1024)];
 
-        $this->assertInvalidationStoreAction($data, 'size.file', ['size' => 1 * 1024 * 1024]);
-        $this->assertInvalidationUpdateAction($data, 'size.file', ['size' => 1 * 1024 * 1024]);
+        $this->assertInvalidationStoreAction($data, 'max.file', ['max' => Video::TRAILER_FILE_MAX_SIZE]);
+        $this->assertInvalidationUpdateAction($data, 'max.file', ['max' => Video::TRAILER_FILE_MAX_SIZE]);
 
         $data = ['thumb_file' => UploadedFile::fake()->image('teste.jpg')->size(6 * 1024)];
 
-        $this->assertInvalidationStoreAction($data, 'size.file', ['size' => 5 * 1024]);
-        $this->assertInvalidationUpdateAction($data, 'size.file', ['size' => 5 * 1024]);
+        $this->assertInvalidationStoreAction($data, 'max.file', ['max' => Video::THUMB_FILE_MAX_SIZE]);
+        $this->assertInvalidationUpdateAction($data, 'max.file', ['max' => Video::THUMB_FILE_MAX_SIZE]);
 
         $data = ['banner_file' => UploadedFile::fake()->image('teste.jpg')->size(12 * 1024)];
 
-        $this->assertInvalidationStoreAction($data, 'size.file', ['size' => 10 * 1024]);
-        $this->assertInvalidationUpdateAction($data, 'size.file', ['size' => 10 * 1024]);
+        $this->assertInvalidationStoreAction($data, 'max.file', ['max' => Video::BANNER_FILE_MAX_SIZE]);
+        $this->assertInvalidationUpdateAction($data, 'max.file', ['max' => Video::BANNER_FILE_MAX_SIZE]);
 
 
     }

@@ -90,4 +90,19 @@ trait UploadFiles
         return $files;
     }
 
+    protected function createUrl($filename): ?string
+    {
+        if (!$filename) {
+            return null;
+        }
+
+        $path = "{$this->uploadDir()}/{$filename}";
+
+        if (Storage::exists($path)) {
+            return Storage::url($path);
+        }
+
+        return null;
+    }
+
 }

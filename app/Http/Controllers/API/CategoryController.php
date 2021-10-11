@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Category;
+use JetBrains\PhpStorm\ArrayShape;
 
 class CategoryController extends ResourceAbstractController
 {
-    private $rules = [
+    private array $rules = [
         'name' => 'required|max:255',
         'description' => 'nullable',
         'is_active' => 'boolean',
@@ -17,6 +18,7 @@ class CategoryController extends ResourceAbstractController
         return Category::class;
     }
 
+    #[ArrayShape(['name' => "string", 'description' => "string", 'is_active' => "string"])]
     protected function rulesStore(): array
     {
         return [
@@ -26,6 +28,7 @@ class CategoryController extends ResourceAbstractController
         ];
     }
 
+    #[ArrayShape(['name' => "string", 'description' => "string", 'is_active' => "string"])]
     protected function rulesUpdate(): array
     {
         return [

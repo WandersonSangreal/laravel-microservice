@@ -22,6 +22,11 @@ class Video extends Model
 
     const RATING_LIST = ['L', '10', '12', '14', '16', '18'];
 
+    const THUMB_FILE_MAX_SIZE = 5 * 1024; # 1MB
+    const BANNER_FILE_MAX_SIZE = 10 * 1024; # 10MB
+    const VIDEO_FILE_MAX_SIZE = 50 * 1024 * 1024; # 50GB
+    const TRAILER_FILE_MAX_SIZE = 1 * 1024 * 1024; # 1GB
+
     public $incrementing = false;
 
     protected $fillable = ['title', 'description', 'year_launched', 'opened', 'rating', 'duration', 'video_file', 'thumb_file', 'banner_file', 'trailer_file'];
@@ -113,17 +118,6 @@ class Video extends Model
         if (array_key_exists('genres_id', $attributes)) {
             $video->genres()->sync($attributes['genres_id']);
         }
-    }
-
-    public function createUrl($field): ?string
-    {
-        $path = "{$this->id}/{$field}";
-
-        if (Storage::exists($path)) {
-            return Storage::url($path);
-        }
-
-        return null;
     }
 
     public function getVideoFileUrlAttribute(): ?string
