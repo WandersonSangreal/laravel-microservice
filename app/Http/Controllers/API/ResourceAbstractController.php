@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers\API;
 
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use App\Http\Controllers\Controller;
+use ReflectionClass;
 
 abstract class ResourceAbstractController extends Controller
 {
+    private $paginationSize = 15;
+
+    protected abstract function enablePagination();
+
     protected abstract function model();
+
+    protected abstract function resource();
 
     protected abstract function rulesStore();
 
@@ -19,7 +27,16 @@ abstract class ResourceAbstractController extends Controller
 
     public function index()
     {
-        return $this->model()::all();
+        $items = $this->enablePagination() ? $this->model()::paginate($this->paginationSize) : $this->model()::all();
+
+        $resourceCollection = $this->resource();
+        $reflectionClass = new ReflectionClass($resourceCollection);
+
+        if ($reflectionClass->isSubclassOf(ResourceCollection::class)) {
+            return new $resourceCollection($items);
+        }
+
+        return $resourceCollection::collection($items);
     }
 
     public function store(Request $request)
@@ -28,19 +45,20 @@ abstract class ResourceAbstractController extends Controller
 
         $item = $this->model()::create($validated);
         $item->refresh();
-        return $item;
-    }
 
-    protected function findOrFail($id)
-    {
-        $model = $this->model();
-        $keyName = (new $model)->getRouteKeyName();
-        return $this->model()::where($keyName, $id)->firstOrFail();
+        $resource = $this->resource();
+
+        return new $resource($item);
     }
 
     public function show($id)
     {
-        return $this->findOrFail($id);
+        $item = $this->findOrFail($id);
+
+        $resource = $this->resource();
+
+        return new $resource($item);
+
     }
 
     public function update(Request $request, $id)
@@ -52,7 +70,9 @@ abstract class ResourceAbstractController extends Controller
 
         # $item->refresh();
 
-        return $item;
+        $resource = $this->resource();
+
+        return new $resource($item);
     }
 
     public function destroy($id): JsonResponse
@@ -64,4 +84,12 @@ abstract class ResourceAbstractController extends Controller
         return response()->json([], 204);
 
     }
+
+    protected function findOrFail($id)
+    {
+        $model = $this->model();
+        $keyName = (new $model)->getRouteKeyName();
+        return $this->model()::where($keyName, $id)->firstOrFail();
+    }
+
 }

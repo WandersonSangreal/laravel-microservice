@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\VideoResource;
 use App\Models\Video;
 use App\Rules\GenresHasCategoriesRule;
 use Illuminate\Http\Request;
@@ -34,6 +35,21 @@ class VideoController extends ResourceAbstractController
         ];
     }
 
+    protected function model(): string
+    {
+        return Video::class;
+    }
+
+    protected function resource(): string
+    {
+        return VideoResource::class;
+    }
+
+    protected function enablePagination(): bool
+    {
+        return true;
+    }
+
     public function store(Request $request)
     {
         $this->genreHasCategoriesRule($request);
@@ -43,7 +59,9 @@ class VideoController extends ResourceAbstractController
         $item = $this->model()::create($validated);
 
         $item->refresh();
-        return $item;
+        $resource = $this->resource();
+
+        return new $resource($item);
     }
 
     public function update(Request $request, $id)
@@ -56,18 +74,15 @@ class VideoController extends ResourceAbstractController
 
         $item->update($values);
 
-        return $item;
+        $resource = $this->resource();
+
+        return new $resource($item);
     }
 
     protected function genreHasCategoriesRule(Request $request)
     {
         $values = is_array($request->get('categories_id')) ? $request->get('categories_id') : [];
         $this->rules['genres_id'][] = new GenresHasCategoriesRule($values);
-    }
-
-    protected function model(): string
-    {
-        return Video::class;
     }
 
     protected function rulesStore(): array

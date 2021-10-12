@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\CastMemberResource;
 use App\Models\CastMember;
 
 class CastMemberController extends ResourceAbstractController
@@ -16,6 +17,16 @@ class CastMemberController extends ResourceAbstractController
     protected function model(): string
     {
         return CastMember::class;
+    }
+
+    protected function resource(): string
+    {
+        return CastMemberResource::class;
+    }
+
+    protected function enablePagination(): bool
+    {
+        return true;
     }
 
     protected function rulesStore(): array

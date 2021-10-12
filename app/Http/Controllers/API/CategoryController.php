@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use JetBrains\PhpStorm\ArrayShape;
 
@@ -16,6 +17,16 @@ class CategoryController extends ResourceAbstractController
     protected function model(): string
     {
         return Category::class;
+    }
+
+    protected function resource(): string
+    {
+        return CategoryResource::class;
+    }
+
+    protected function enablePagination(): bool
+    {
+        return true;
     }
 
     #[ArrayShape(['name' => "string", 'description' => "string", 'is_active' => "string"])]

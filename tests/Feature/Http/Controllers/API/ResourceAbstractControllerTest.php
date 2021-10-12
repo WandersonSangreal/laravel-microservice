@@ -36,7 +36,11 @@ class ResourceAbstractControllerTest extends TestCase
     {
         $category = CategoryStub::create(['name' => 'test_name', 'description' => 'test_description']);
 
-        $this->assertEquals([$category->toArray()], $this->controller->index()->toArray());
+        $resource = $this->controller->index();
+
+        $serialized = $resource->response()->getData(true);
+
+        $this->assertEquals([$category->toArray()], $serialized['data'] ?? $serialized);
     }
 
     public function test_invalidation_data_store()
@@ -54,9 +58,11 @@ class ResourceAbstractControllerTest extends TestCase
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('all')->once()->andReturn(['name' => 'test_namme', 'description' => 'test_description']);
 
-        $value = $this->controller->store($request);
+        $resource = $this->controller->store($request);
 
-        $this->assertEquals(CategoryStub::find(1)->toArray(), $value->toArray());
+        $serialized = $resource->response()->getData(true);
+
+        $this->assertEquals(CategoryStub::find(1)->toArray(), $serialized['data'] ?? $serialized);
     }
 
     public function test_if_find_or_fail_fetch_model()
@@ -87,9 +93,11 @@ class ResourceAbstractControllerTest extends TestCase
     {
         $category = CategoryStub::create(['name' => 'test_name', 'description' => 'test_description']);
 
-        $value = $this->controller->show($category->id);
+        $resourse = $this->controller->show($category->id);
 
-        $this->assertEquals(CategoryStub::find(1)->toArray(), $value->toArray());
+        $serialized = $resourse->response()->getData(true);
+
+        $this->assertEquals(CategoryStub::find(1)->toArray(), $serialized['data'] ?? $serialized);
     }
 
     public function test_update()
@@ -99,9 +107,11 @@ class ResourceAbstractControllerTest extends TestCase
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('all')->once()->andReturn(['name' => 'test_name_update', 'description' => 'test_description_update']);
 
-        $value = $this->controller->update($request, $category->id);
+        $resourse = $this->controller->update($request, $category->id);
 
-        $this->assertEquals(CategoryStub::find(1)->toArray(), $value->toArray());
+        $serialized = $resourse->response()->getData(true);
+
+        $this->assertEquals(CategoryStub::find(1)->toArray(), $serialized['data'] ?? $serialized);
     }
 
     public function test_destroy()

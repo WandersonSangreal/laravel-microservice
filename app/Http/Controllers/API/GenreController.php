@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\GenreResource;
 
 class GenreController extends ResourceAbstractController
 {
@@ -22,6 +23,16 @@ class GenreController extends ResourceAbstractController
     protected function model(): string
     {
         return Genre::class;
+    }
+
+    protected function resource(): string
+    {
+        return GenreResource::class;
+    }
+
+    protected function enablePagination(): bool
+    {
+        return true;
     }
 
     protected function rulesStore(): array
@@ -45,7 +56,9 @@ class GenreController extends ResourceAbstractController
         });
 
         $item->refresh();
-        return $item;
+        $resource = $this->resource();
+
+        return new $resource($item);
 
     }
 
@@ -61,7 +74,10 @@ class GenreController extends ResourceAbstractController
             return $item;
         });
 
-        return $item;
+        $item->refresh();
+        $resource = $this->resource();
+
+        return new $resource($item);
     }
 
     protected function handleRelations($item, Request $request)
