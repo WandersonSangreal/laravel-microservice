@@ -11,10 +11,12 @@ RUN apk add --no-cache openssl \
                libpng-dev \
                libwebp-dev \
                git
+RUN touch /root/.bashrc | echo "PS1='\w\$ '" >> /root/.bashrc
 RUN docker-php-ext-install pdo pdo_mysql
 RUN docker-php-ext-configure gd --enable-gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ --with-webp=/usr/include/
 RUN docker-php-ext-install -j$(nproc) gd
 # RUN docker-php-ext-enable gd
+RUN usermod -u 1000 www-data
 
 RUN touch /home/www-data/.bashrc | echo "PS1='\w\$ '" >> /home/www-data/.bashrc
 
