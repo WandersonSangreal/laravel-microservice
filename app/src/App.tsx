@@ -1,9 +1,11 @@
 import React from 'react';
-import './App.scss';
-import {Navbar} from "./components/Navbar";
 import {Box} from "@mui/material";
+import {Navbar} from "./components/Navbar";
 import {BrowserRouter} from "react-router-dom";
 import AppRouter from "./routes/AppRouter";
+import Breadcrumb from "./components/Breadcrumb/Breadcrumb";
+
+import './App.scss';
 
 function App() {
 
@@ -11,7 +13,8 @@ function App() {
 		<React.Fragment>
 			<BrowserRouter>
 				<Navbar/>
-				<Box>
+				<Box className="PaddingHeader">
+					<Breadcrumb/>
 					<AppRouter/>
 				</Box>
 			</BrowserRouter>

@@ -5,9 +5,6 @@ import {makeStyles} from "@mui/styles";
 const useStyles = makeStyles({
 	title: {
 		color: '#999999'
-	},
-	paddingTop: {
-		paddingTop: '80px'
 	}
 })
 
@@ -20,7 +17,7 @@ export const Page = (props: PageProps) => {
 	const classes = useStyles();
 
 	return (
-		<Container className={classes.paddingTop}>
+		<Container>
 			<Typography className={classes.title} variant="h5">
 				{props.title}
 			</Typography>
