@@ -13,7 +13,7 @@ const useStyles = makeStyles({
 
 type PageProps = {
 	title: string,
-	children: string,
+	children?: string,
 };
 export const Page = (props: PageProps) => {
 
@@ -24,7 +24,8 @@ export const Page = (props: PageProps) => {
 			<Typography className={classes.title} variant="h5">
 				{props.title}
 			</Typography>
-			{props.children}
+			{props?.children}
 		</Container>
 	);
+
 };
