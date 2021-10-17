@@ -60,7 +60,7 @@ export default function Breadcrumb() {
 	}
 
 	return (
-		<Box sx={{display: 'flex', flexDirection: 'column'}}>
+		<Box sx={{display: 'flex', flexDirection: 'column'}} marginBottom={2}>
 			<Route>
 				{
 					({location}) => makeBreadcrumb(location)

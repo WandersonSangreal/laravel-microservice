@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Container, Typography} from "@mui/material";
+import {Box, Container, Typography} from "@mui/material";
 import {makeStyles} from "@mui/styles";
 
 const useStyles = makeStyles({
@@ -18,10 +18,12 @@ export const Page = (props: PageProps) => {
 
 	return (
 		<Container>
-			<Typography className={classes.title} variant="h5">
+			<Typography className={classes.title} variant="h5" marginBottom={2}>
 				{props.title}
 			</Typography>
-			{props?.children}
+			<Box>
+				{props?.children}
+			</Box>
 		</Container>
 	);
 

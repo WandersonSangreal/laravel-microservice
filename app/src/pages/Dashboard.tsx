@@ -4,9 +4,7 @@ import {Page} from "../components/Page";
 export const Dashboard = () => {
 
 	return (
-		<Page title="Dashboard">
-			Hello
-		</Page>
+		<Page title="Dashboard"/>
 	);
 
 };
