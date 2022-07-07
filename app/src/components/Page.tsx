@@ -9,8 +9,8 @@ const useStyles = makeStyles({
 })
 
 type PageProps = {
-	title: string,
-	children?: string,
+	title: string;
+	children?: any;
 };
 export const Page = (props: PageProps) => {
 
@@ -22,7 +22,7 @@ export const Page = (props: PageProps) => {
 				{props.title}
 			</Typography>
 			<Box>
-				{props?.children}
+				{props.children}
 			</Box>
 		</Container>
 	);
